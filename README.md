@@ -1,22 +1,26 @@
-# 📝 NoteManagementSystemClient
+# 📝 NoteManagementSystemServer
 
-[![Angular](https://img.shields.io/badge/Angular-17-dd0031?logo=angular)](https://angular.io/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178c6?logo=typescript)](https://www.typescriptlang.org/)
+[![.NET](https://img.shields.io/badge/.NET-8.0-512bd4?logo=dotnet)](https://dotnet.microsoft.com/)
+[![EF Core](https://img.shields.io/badge/EF_Core-Code_First-blue)](https://learn.microsoft.com/en-us/ef/core/)
 [![JWT](https://img.shields.io/badge/Auth-JWT_Bearer-orange)](https://jwt.io/)
-[![Standalone](https://img.shields.io/badge/Architecture-Standalone_Components-blueviolet)](https://angular.io/guide/standalone-components)
+[![Swagger](https://img.shields.io/badge/Docs-Swagger_UI-85EA2D?logo=swagger)](https://swagger.io/)
+[![Identity](https://img.shields.io/badge/Identity-ASP.NET_Core-blueviolet)](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity)
 
-**NoteManagementSystemClient**, [NoteManagementSystemServer](https://github.com/abdullahhaktan/NoteManagementSystemServer) ile çalışmak üzere geliştirilmiş Angular tabanlı frontend uygulamasıdır. Kullanıcılar ders notlarını yönetebilir, dosya yükleyebilir ve arşivleyebilir.
+**NoteManagementSystemServer**, kullanıcıların ders notlarını yönetebileceği, dosya yükleyebileceği ve arşivleyebileceği bir RESTful API'dir. ASP.NET Core 8, Entity Framework Core ve JWT kimlik doğrulama kullanılarak geliştirilmiştir.
+
+> 🖥️ **Frontend:** [NoteManagementSystemClient](https://github.com/abdullahhaktan/NoteManagementSystemClient) — Angular 17
 
 ---
 
 ## ✨ Özellikler
 
-- 🔐 **JWT Kimlik Doğrulama** — Token tabanlı güvenli giriş/çıkış
-- 📋 **Not Yönetimi** — Not oluşturma, düzenleme, silme ve listeleme
-- 📎 **Dosya Yükleme** — PDF, PNG, JPG, DOCX formatlarında dosya ekleme
-- 🗃️ **Arşiv** — Silinen notları arşivde görüntüleme ve kalıcı silme
-- 🔒 **Route Guard** — Kimlik doğrulanmamış kullanıcıları login'e yönlendirme
-- 🌙 **Dark Mode** — Modern koyu tema tasarım
+- 🔐 **JWT Kimlik Doğrulama** — Token tabanlı güvenli giriş/çıkış, HmacSha512 imzalama
+- 📋 **Not Yönetimi** — Not oluşturma, düzenleme, listeleme ve soft-delete
+- 📎 **Dosya Yükleme** — Sunucuya dosya yükleme, GUID tabanlı benzersiz isimlendirme
+- 🗃️ **Soft Delete & Arşiv** — Silinen notlar `DeletedAt` alanıyla arşivlenir, kalıcı silme ayrıca yapılır
+- 🛡️ **Global Authentication** — Tüm endpoint'ler varsayılan olarak korumalı, sadece `[AllowAnonymous]` olanlar açık
+- 🔄 **CORS** — Angular frontend ile güvenli iletişim
+- 📄 **Swagger UI** — Bearer token desteğiyle API dokümantasyonu
 
 ---
 
@@ -24,48 +28,46 @@
 
 | Teknoloji | Açıklama |
 | :--- | :--- |
-| **Angular 17** | Standalone Component mimarisi |
-| **TypeScript** | Tip güvenli geliştirme |
-| **Reactive Forms** | Form yönetimi ve validasyon |
-| **HTTP Interceptor** | Her isteğe otomatik JWT token ekleme |
-| **Route Guards** | Sayfa erişim kontrolü |
-| **Lazy Loading** | Performanslı component yükleme |
+| **ASP.NET Core 8** | Web API framework |
+| **Entity Framework Core** | Code First ORM |
+| **ASP.NET Core Identity** | Kullanıcı ve rol yönetimi |
+| **JWT Bearer** | Token tabanlı kimlik doğrulama |
+| **Mapster** | DTO mapping (MaxDepth=2 ile döngüsel referans koruması) |
+| **MS SQL Server** | Veritabanı |
+| **Swagger / Swashbuckle** | API dokümantasyonu |
 
 ---
 
 ## 📁 Proje Yapısı
 
 ```
-src/
-├── app/
-│   ├── core/
-│   │   ├── guards/
-│   │   │   └── auth.guard.ts          # Route koruma
-│   │   ├── interceptors/
-│   │   │   └── jwt.interceptor.ts     # Bearer token ekleme
-│   │   └── services/
-│   │       └── auth.service.ts        # Login/logout/token yönetimi
-│   ├── features/
-│   │   ├── auth/
-│   │   │   └── login/                 # Giriş sayfası
-│   │   └── notes/
-│   │       ├── note-list/             # Not listesi
-│   │       ├── note-form/             # Not oluşturma/düzenleme
-│   │       ├── note-detail/           # Not detayı
-│   │       └── note-archive/          # Arşiv sayfası
-│   ├── shared/
-│   │   ├── models/
-│   │   │   ├── note.model.ts          # Note DTO modelleri
-│   │   │   └── user.model.ts          # User DTO modelleri
-│   │   └── services/
-│   │       ├── note.service.ts        # Note CRUD işlemleri
-│   │       └── archive.service.ts     # Arşiv işlemleri
-│   ├── app.component.ts
-│   ├── app.config.ts
-│   └── app.routes.ts
-└── environments/
-    ├── environment.ts                 # API URL (development)
-    └── environment.prod.ts            # API URL (production)
+NoteManagementSystemServer/
+├── Context/
+│   └── NoteManagementContext.cs       # DbContext, Identity, Seed Data
+├── Controllers/
+│   ├── LoginController.cs             # POST /api/login — [AllowAnonymous]
+│   ├── NotesController.cs             # CRUD /api/notes
+│   └── NoteArchivesController.cs      # GET, DELETE /api/notearchives
+├── Data/
+│   ├── DTOs/
+│   │   ├── NoteDtos/                  # CreateNoteDto, UpdateNoteDto, ResultNoteDto, GetNoteByIdDto
+│   │   └── UserDtos/                  # LoginDto, UserDto
+│   └── Entities/
+│       ├── AppUser.cs                 # Identity kullanıcısı
+│       ├── AppRole.cs                 # Identity rolü
+│       └── Note.cs                    # Not entity
+├── Services/
+│   ├── NoteServices/
+│   │   ├── INoteService.cs
+│   │   └── NoteService.cs             # CRUD + dosya yönetimi
+│   ├── NoteArchiveServices/
+│   │   ├── INoteArchiveService.cs
+│   │   └── NoteArchiveService.cs      # Arşiv listeleme + kalıcı silme
+│   └── TokenServices/
+│       ├── ITokenService.cs
+│       └── TokenService.cs            # JWT token üretimi
+├── Uploads/                           # Yüklenen dosyalar (git'e eklenmez)
+└── Program.cs                         # Uygulama yapılandırması
 ```
 
 ---
@@ -74,52 +76,90 @@ src/
 
 | Özellik | Açıklama |
 | :--- | :--- |
-| **Mimari** | Standalone Component (NgModule'siz) |
-| **HTTP** | `provideHttpClient` + Functional Interceptor |
-| **Routing** | Lazy Loading ile `loadComponent` |
-| **Auth** | JWT Bearer Token — `localStorage` yönetimi |
-| **Form** | Reactive Forms + Validasyon |
-| **API İletişim** | `multipart/form-data` (dosya yükleme için) |
+| **Mimari** | Service Layer + Repository Pattern (EF Core) |
+| **Veri Yönetimi** | Entity Framework Core — Code First |
+| **Kimlik Doğrulama** | JWT Bearer — HmacSha512, `ClockSkew = Zero` |
+| **Yetkilendirme** | Global `AuthorizeFilter` — tüm controller'lar korumalı |
+| **DTO Mapping** | Mapster — `MaxDepth(2)` ile sonsuz döngü koruması |
+| **Dosya Yükleme** | `[FromForm]` + `IFormFile` — GUID isimli fiziksel depolama |
+| **Soft Delete** | `DeletedAt` alanı — arşiv ve aktif notlar bu alanla ayrılır |
+| **JSON** | `ReferenceHandler.IgnoreCycles` — döngüsel referans engeli |
+
+---
+
+## 🔌 API Endpoints
+
+### Auth
+| Method | Endpoint | Açıklama | Auth |
+| :--- | :--- | :--- | :--- |
+| POST | `/api/login` | Kullanıcı girişi, JWT token döner | ❌ |
+
+### Notes
+| Method | Endpoint | Açıklama | Auth |
+| :--- | :--- | :--- | :--- |
+| GET | `/api/notes` | Kullanıcının aktif notları | ✅ |
+| GET | `/api/notes/GetNoteById/{id}` | Nota göre detay | ✅ |
+| POST | `/api/notes` | Yeni not oluştur `[FromForm]` | ✅ |
+| PUT | `/api/notes` | Notu güncelle `[FromForm]` | ✅ |
+| DELETE | `/api/notes?id={id}` | Notu arşive taşı (soft delete) | ✅ |
+
+### Archive
+| Method | Endpoint | Açıklama | Auth |
+| :--- | :--- | :--- | :--- |
+| GET | `/api/notearchives` | Arşivlenen notları listele | ✅ |
+| DELETE | `/api/notearchives?id={id}` | Notu kalıcı sil (dosyayla birlikte) | ✅ |
 
 ---
 
 ## 🚀 Kurulum
 
-> ⚠️ Bu projenin çalışması için [NoteManagementSystemServer](https://github.com/abdullahhaktan/NoteManagementSystemServer) API'sinin ayakta olması gerekir.
-
 **1. Repoyu klonlayın:**
 ```bash
-git clone https://github.com/abdullahhaktan/NoteManagementSystemClient.git
-cd NoteManagementSystemClient
+git clone https://github.com/abdullahhaktan/NoteManagementSystemServer.git
+cd NoteManagementSystemServer
 ```
 
-**2. Bağımlılıkları yükleyin:**
+**2. `appsettings.json` dosyasını düzenleyin:**
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=.;Database=NoteManagementDb;Trusted_Connection=True;TrustServerCertificate=True;"
+  },
+  "Jwt": {
+    "Key": "buraya-en-az-32-karakterlik-gizli-anahtar",
+    "Issuer": "NoteManagementSystemServer",
+    "Audience": "NoteManagementSystemClient",
+    "ExpireInMinutes": "60"
+  }
+}
+```
+
+**3. Veritabanını oluşturun:**
 ```bash
-npm install
+dotnet ef database update
 ```
 
-**3. API adresini ayarlayın:**
-
-`src/environments/environment.ts` dosyasını açın:
-```typescript
-export const environment = {
-  production: false,
-  apiUrl: 'https://localhost:XXXX/api'  // .NET API port numaranızı girin
-};
-```
-
-**4. Uygulamayı başlatın:**
+**4. Projeyi çalıştırın:**
 ```bash
-ng serve
+dotnet run
 ```
 
-Uygulama `http://localhost:4200` adresinde çalışacaktır.
+Swagger UI: `https://localhost:{PORT}/swagger`
 
 ---
 
-## 🔗 İlgili Repo
+## 🔐 Seed Data
 
-- **Backend API:** [NoteManagementSystemServer](https://github.com/abdullahhaktan/NoteManagementSystemServer) — ASP.NET Core 8, JWT, Entity Framework Core
+Proje ilk çalıştırıldığında aşağıdaki veriler otomatik oluşturulur:
+
+| Alan | Değer |
+| :--- | :--- |
+| **Kullanıcı Adı** | `tetacode` |
+| **Şifre** | `Admin123!` |
+| **E-posta** | `my@tetacode.com` |
+| **Rol** | `User` |
+
+> ⚠️ Üretim ortamında seed data şifresini mutlaka değiştirin.
 
 ---
 
