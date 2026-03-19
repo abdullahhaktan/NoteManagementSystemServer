@@ -9,11 +9,11 @@ using NoteManagemenSystemServer.Context;
 
 #nullable disable
 
-namespace NoteManagemenSystemServer.Migrations
+namespace NoteManagementSystemServer.Migrations
 {
     [DbContext(typeof(NoteManagementContext))]
-    [Migration("20260313175640_migInitial")]
-    partial class migInitial
+    [Migration("20260319065127_migInitialCommit")]
+    partial class migInitialCommit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -268,7 +268,7 @@ namespace NoteManagemenSystemServer.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "57113856-2794-4d58-b64e-6339c201d4a6",
+                            ConcurrencyStamp = "5a417968-170a-4250-ac95-ddc4c7e08074",
                             Email = "my@tetacode.com",
                             EmailConfirmed = true,
                             FirstName = "Melih",
@@ -276,9 +276,9 @@ namespace NoteManagemenSystemServer.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "MY@TETACODE.COM",
                             NormalizedUserName = "TETACODE",
-                            PasswordHash = "AQAAAAIAAYagAAAAEInvqcGQxQ0j/nk1bg/INskpsWVmr8BvBpW7BHPkQzxCyozmeVSL8bDrKFqxzfWLxg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBjTt1ztacUVZEPB+6Wa3yqL45mBXf9+UuPUKKTKwNj/rD3Rtj/YyKF/L15WJn9psA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c7663f57-3456-4775-89fd-d7df5676c6d2",
+                            SecurityStamp = "d2978d0a-b4fc-4d47-8413-61063aef9f33",
                             TwoFactorEnabled = false,
                             UserName = "tetacode"
                         });
@@ -299,6 +299,9 @@ namespace NoteManagemenSystemServer.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -314,9 +317,6 @@ namespace NoteManagemenSystemServer.Migrations
                     b.Property<string>("FileType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -340,12 +340,11 @@ namespace NoteManagemenSystemServer.Migrations
                         {
                             Id = 1,
                             CourseName = "ASP.NET Core",
-                            CreatedDate = new DateTime(2026, 3, 3, 20, 56, 39, 408, DateTimeKind.Local).AddTicks(191),
+                            CreatedDate = new DateTime(2026, 3, 9, 9, 51, 27, 53, DateTimeKind.Local).AddTicks(7875),
                             FileName = "aspnet-giris.pdf",
                             FilePath = "/uploads/aspnet-giris.pdf",
                             FileSize = "1.2 MB",
                             FileType = "application/pdf",
-                            IsDeleted = false,
                             Title = "ASP.NET Core Giriş",
                             UserId = 1
                         },
@@ -353,12 +352,11 @@ namespace NoteManagemenSystemServer.Migrations
                         {
                             Id = 2,
                             CourseName = "Veritabanı",
-                            CreatedDate = new DateTime(2026, 3, 5, 20, 56, 39, 408, DateTimeKind.Local).AddTicks(207),
+                            CreatedDate = new DateTime(2026, 3, 11, 9, 51, 27, 53, DateTimeKind.Local).AddTicks(7893),
                             FileName = "ef-core.pdf",
                             FilePath = "/uploads/ef-core.pdf",
                             FileSize = "2.5 MB",
                             FileType = "application/pdf",
-                            IsDeleted = false,
                             Title = "Entity Framework Core",
                             UserId = 1
                         },
@@ -366,12 +364,11 @@ namespace NoteManagemenSystemServer.Migrations
                         {
                             Id = 3,
                             CourseName = "React",
-                            CreatedDate = new DateTime(2026, 3, 8, 20, 56, 39, 408, DateTimeKind.Local).AddTicks(210),
+                            CreatedDate = new DateTime(2026, 3, 14, 9, 51, 27, 53, DateTimeKind.Local).AddTicks(7896),
                             FileName = "react.pdf",
                             FilePath = "/uploads/react.pdf",
                             FileSize = "1.8 MB",
                             FileType = "application/pdf",
-                            IsDeleted = false,
                             Title = "React ile Frontend",
                             UserId = 1
                         },
@@ -379,12 +376,11 @@ namespace NoteManagemenSystemServer.Migrations
                         {
                             Id = 4,
                             CourseName = "Veritabanı",
-                            CreatedDate = new DateTime(2026, 3, 10, 20, 56, 39, 408, DateTimeKind.Local).AddTicks(213),
+                            CreatedDate = new DateTime(2026, 3, 16, 9, 51, 27, 53, DateTimeKind.Local).AddTicks(7897),
                             FileName = "sql-optimization.pdf",
                             FilePath = "/uploads/sql-optimization.pdf",
                             FileSize = "3.1 MB",
                             FileType = "application/pdf",
-                            IsDeleted = false,
                             Title = "SQL Server Optimizasyon",
                             UserId = 1
                         });

@@ -18,8 +18,8 @@ namespace NoteManagemenSystemServer.Services.NoteServices
             _userManager = userManager;
             _noteManagementContext = noteManagementContext;
 
+            // Ensure the Uploads folder exists on startup
             _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-
             if (!Directory.Exists(_uploadPath))
                 Directory.CreateDirectory(_uploadPath);
         }
@@ -27,6 +27,8 @@ namespace NoteManagemenSystemServer.Services.NoteServices
         public async Task<List<ResultNoteDto>> GetMyNotesAsync(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
+
+            // Only return notes that haven't been soft-deleted (DeletedAt == null)
             var myNotes = await _noteManagementContext.Notes.Where(n => n.UserId == user.Id && n.DeletedAt == null).ToListAsync();
             var values = myNotes.Adapt<List<ResultNoteDto>>();
             return values;
@@ -36,6 +38,7 @@ namespace NoteManagemenSystemServer.Services.NoteServices
         {
             var note = createNoteDto.Adapt<Note>();
 
+            // If a file was uploaded, save it and populate file-related fields
             if (createNoteDto.File != null)
             {
                 var savedFileName = await SaveFileAsync(createNoteDto.File);
@@ -81,7 +84,7 @@ namespace NoteManagemenSystemServer.Services.NoteServices
             // YENİ DOSYA GELDİYSE
             if (updateNoteDto.File != null)
             {
-                // Eski dosyayı sil
+                // Delete the old file from disk before saving the new one
                 if (!string.IsNullOrEmpty(existingNote.FilePath))
                 {
                     var oldFileName = Path.GetFileName(existingNote.FilePath);
@@ -111,6 +114,7 @@ namespace NoteManagemenSystemServer.Services.NoteServices
                 throw new ArgumentNullException("Silinecek note bulunamadı");
             }
 
+            // Soft delete — we don't remove the record, just set DeletedAt timestamp
             note.DeletedAt = DateTime.Now;
             _noteManagementContext.Notes.Update(note);
             await _noteManagementContext.SaveChangesAsync();
@@ -123,6 +127,7 @@ namespace NoteManagemenSystemServer.Services.NoteServices
                 return null;
             }
 
+            // Use a GUID as filename to prevent collisions and avoid exposing original names
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
             var filePath = Path.Combine(_uploadPath, fileName);
 
@@ -136,6 +141,7 @@ namespace NoteManagemenSystemServer.Services.NoteServices
 
         private string FormatFileSize(long bytes)
         {
+            // Converts raw byte count to human-readable format (KB, MB, GB)
             string[] sizes = { "B", "KB", "MB", "GB" };
             double len = bytes;
             int order = 0;

@@ -8,7 +8,7 @@ using NoteManagemenSystemServer.Context;
 
 #nullable disable
 
-namespace NoteManagemenSystemServer.Migrations
+namespace NoteManagementSystemServer.Migrations
 {
     [DbContext(typeof(NoteManagementContext))]
     partial class NoteManagementContextModelSnapshot : ModelSnapshot
@@ -265,7 +265,7 @@ namespace NoteManagemenSystemServer.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2fe49a93-787b-41da-be82-e059b50391e1",
+                            ConcurrencyStamp = "5a417968-170a-4250-ac95-ddc4c7e08074",
                             Email = "my@tetacode.com",
                             EmailConfirmed = true,
                             FirstName = "Melih",
@@ -273,9 +273,9 @@ namespace NoteManagemenSystemServer.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "MY@TETACODE.COM",
                             NormalizedUserName = "TETACODE",
-                            PasswordHash = "AQAAAAIAAYagAAAAEF8iYxUC1YXiyISNnPBP/OwAgb9KXL7rOSkse0dJ0A32oxNKy87z7IXEkDj0NhyF7w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBjTt1ztacUVZEPB+6Wa3yqL45mBXf9+UuPUKKTKwNj/rD3Rtj/YyKF/L15WJn9psA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0be26f04-8570-4ecf-ab18-6853525a53eb",
+                            SecurityStamp = "d2978d0a-b4fc-4d47-8413-61063aef9f33",
                             TwoFactorEnabled = false,
                             UserName = "tetacode"
                         });
@@ -337,7 +337,7 @@ namespace NoteManagemenSystemServer.Migrations
                         {
                             Id = 1,
                             CourseName = "ASP.NET Core",
-                            CreatedDate = new DateTime(2026, 3, 4, 10, 50, 15, 24, DateTimeKind.Local).AddTicks(7464),
+                            CreatedDate = new DateTime(2026, 3, 9, 9, 51, 27, 53, DateTimeKind.Local).AddTicks(7875),
                             FileName = "aspnet-giris.pdf",
                             FilePath = "/uploads/aspnet-giris.pdf",
                             FileSize = "1.2 MB",
@@ -349,7 +349,7 @@ namespace NoteManagemenSystemServer.Migrations
                         {
                             Id = 2,
                             CourseName = "Veritabanı",
-                            CreatedDate = new DateTime(2026, 3, 6, 10, 50, 15, 24, DateTimeKind.Local).AddTicks(7471),
+                            CreatedDate = new DateTime(2026, 3, 11, 9, 51, 27, 53, DateTimeKind.Local).AddTicks(7893),
                             FileName = "ef-core.pdf",
                             FilePath = "/uploads/ef-core.pdf",
                             FileSize = "2.5 MB",
@@ -361,7 +361,7 @@ namespace NoteManagemenSystemServer.Migrations
                         {
                             Id = 3,
                             CourseName = "React",
-                            CreatedDate = new DateTime(2026, 3, 9, 10, 50, 15, 24, DateTimeKind.Local).AddTicks(7473),
+                            CreatedDate = new DateTime(2026, 3, 14, 9, 51, 27, 53, DateTimeKind.Local).AddTicks(7896),
                             FileName = "react.pdf",
                             FilePath = "/uploads/react.pdf",
                             FileSize = "1.8 MB",
@@ -373,7 +373,7 @@ namespace NoteManagemenSystemServer.Migrations
                         {
                             Id = 4,
                             CourseName = "Veritabanı",
-                            CreatedDate = new DateTime(2026, 3, 11, 10, 50, 15, 24, DateTimeKind.Local).AddTicks(7475),
+                            CreatedDate = new DateTime(2026, 3, 16, 9, 51, 27, 53, DateTimeKind.Local).AddTicks(7897),
                             FileName = "sql-optimization.pdf",
                             FilePath = "/uploads/sql-optimization.pdf",
                             FileSize = "3.1 MB",

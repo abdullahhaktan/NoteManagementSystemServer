@@ -4,10 +4,10 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace NoteManagemenSystemServer.Migrations
+namespace NoteManagementSystemServer.Migrations
 {
     /// <inheritdoc />
-    public partial class migInitial : Migration
+    public partial class migInitialCommit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -188,7 +188,7 @@ namespace NoteManagemenSystemServer.Migrations
                     FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FileType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FileSize = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false)
@@ -212,17 +212,17 @@ namespace NoteManagemenSystemServer.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1, 0, "57113856-2794-4d58-b64e-6339c201d4a6", "my@tetacode.com", true, "Melih", "Yıldırım", false, null, "MY@TETACODE.COM", "TETACODE", "AQAAAAIAAYagAAAAEInvqcGQxQ0j/nk1bg/INskpsWVmr8BvBpW7BHPkQzxCyozmeVSL8bDrKFqxzfWLxg==", null, false, "c7663f57-3456-4775-89fd-d7df5676c6d2", false, "tetacode" });
+                values: new object[] { 1, 0, "5a417968-170a-4250-ac95-ddc4c7e08074", "my@tetacode.com", true, "Melih", "Yıldırım", false, null, "MY@TETACODE.COM", "TETACODE", "AQAAAAIAAYagAAAAEBjTt1ztacUVZEPB+6Wa3yqL45mBXf9+UuPUKKTKwNj/rD3Rtj/YyKF/L15WJn9psA==", null, false, "d2978d0a-b4fc-4d47-8413-61063aef9f33", false, "tetacode" });
 
             migrationBuilder.InsertData(
                 table: "Notes",
-                columns: new[] { "Id", "CourseName", "CreatedDate", "FileName", "FilePath", "FileSize", "FileType", "IsDeleted", "Title", "UpdatedDate", "UserId" },
+                columns: new[] { "Id", "CourseName", "CreatedDate", "DeletedAt", "FileName", "FilePath", "FileSize", "FileType", "Title", "UpdatedDate", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "ASP.NET Core", new DateTime(2026, 3, 3, 20, 56, 39, 408, DateTimeKind.Local).AddTicks(191), "aspnet-giris.pdf", "/uploads/aspnet-giris.pdf", "1.2 MB", "application/pdf", false, "ASP.NET Core Giriş", null, 1 },
-                    { 2, "Veritabanı", new DateTime(2026, 3, 5, 20, 56, 39, 408, DateTimeKind.Local).AddTicks(207), "ef-core.pdf", "/uploads/ef-core.pdf", "2.5 MB", "application/pdf", false, "Entity Framework Core", null, 1 },
-                    { 3, "React", new DateTime(2026, 3, 8, 20, 56, 39, 408, DateTimeKind.Local).AddTicks(210), "react.pdf", "/uploads/react.pdf", "1.8 MB", "application/pdf", false, "React ile Frontend", null, 1 },
-                    { 4, "Veritabanı", new DateTime(2026, 3, 10, 20, 56, 39, 408, DateTimeKind.Local).AddTicks(213), "sql-optimization.pdf", "/uploads/sql-optimization.pdf", "3.1 MB", "application/pdf", false, "SQL Server Optimizasyon", null, 1 }
+                    { 1, "ASP.NET Core", new DateTime(2026, 3, 9, 9, 51, 27, 53, DateTimeKind.Local).AddTicks(7875), null, "aspnet-giris.pdf", "/uploads/aspnet-giris.pdf", "1.2 MB", "application/pdf", "ASP.NET Core Giriş", null, 1 },
+                    { 2, "Veritabanı", new DateTime(2026, 3, 11, 9, 51, 27, 53, DateTimeKind.Local).AddTicks(7893), null, "ef-core.pdf", "/uploads/ef-core.pdf", "2.5 MB", "application/pdf", "Entity Framework Core", null, 1 },
+                    { 3, "React", new DateTime(2026, 3, 14, 9, 51, 27, 53, DateTimeKind.Local).AddTicks(7896), null, "react.pdf", "/uploads/react.pdf", "1.8 MB", "application/pdf", "React ile Frontend", null, 1 },
+                    { 4, "Veritabanı", new DateTime(2026, 3, 16, 9, 51, 27, 53, DateTimeKind.Local).AddTicks(7897), null, "sql-optimization.pdf", "/uploads/sql-optimization.pdf", "3.1 MB", "application/pdf", "SQL Server Optimizasyon", null, 1 }
                 });
 
             migrationBuilder.CreateIndex(

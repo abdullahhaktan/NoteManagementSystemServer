@@ -1,3 +1,4 @@
+using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -7,47 +8,55 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NoteManagemenSystemServer.Context;
 using NoteManagemenSystemServer.Data.DTOs.NoteDtos;
+using NoteManagemenSystemServer.Data.DTOs.UserDtos;
 using NoteManagemenSystemServer.Data.Entities;
+using NoteManagemenSystemServer.Middleware;
 using NoteManagemenSystemServer.Services.NoteArhiveServices;
 using NoteManagemenSystemServer.Services.NoteServices;
+using NoteManagemenSystemServer.Validators;
 using NoteManagementSystemServer.Services.TokenServices;
+using NoteManagementSystemServer.Validators;
 using System.Text;
 using System.Text.Json.Serialization;
 
-// create a folder called Uploads in the project root
+// Ensure the Uploads folder exists on startup — files are stored here
 var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
 if (!Directory.Exists(uploadPath))
     Directory.CreateDirectory(uploadPath);
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-// map Note entity to ResultNoteDto so we don't return the full entity
+// Prevent infinite loops when mapping Note ? ResultNoteDto (user has notes, notes have user...)
 TypeAdapterConfig<Note, ResultNoteDto>.NewConfig()
     .MaxDepth(2);
 
-// **ÖNEMLÝ: CORS ayarlarýný düzeltelim**
+// Allow requests from the Angular frontend
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowUi", policy =>
     {
-        policy.WithOrigins("https://localhost:7156","http://localhost:4200")
+        policy.WithOrigins("https://localhost:7156", "http://localhost:4200")
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials(); // Cookie gönderimine izin ver
+              .AllowCredentials();
     });
 });
 
-// register services to dependency injectioni
+// Register application services
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<INoteService, NoteService>();
 builder.Services.AddScoped<INoteArchiveService, NoteArchiveService>();
+
+// Register FluentValidation validators
+builder.Services.AddScoped<IValidator<LoginDto>, LoginValidator>();
+builder.Services.AddScoped<IValidator<CreateNoteDto>, CreateNoteValidator>();
+builder.Services.AddScoped<IValidator<UpdateNoteDto>, UpdateNoteValidator>();
 
 builder.Services.AddIdentityCore<AppUser>()
     .AddRoles<IdentityRole<int>>()
     .AddEntityFrameworkStores<NoteManagementContext>();
 
-// Kimlik doðrulama (Authentication) sistemini JWT þemasýyla çalýþacak þekilde yapýlandýrýyoruz.
+// Configure JWT authentication — every incoming token is validated against these rules
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -85,11 +94,11 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddDbContext<NoteManagementContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
     options.UseSqlServer(connectionString);
 });
 
-// Global Authentication
+// Apply authentication globally — every endpoint requires a valid token by default
+// Individual endpoints can opt out using [AllowAnonymous]
 builder.Services.AddControllers(config =>
 {
     var policy = new AuthorizationPolicyBuilder()
@@ -104,6 +113,8 @@ builder.Services.AddControllers(config =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
+
+// Configure Swagger with Bearer token support for testing protected endpoints
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "MusicApp API", Version = "v1" });
@@ -144,11 +155,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Middleware order matters — ExceptionMiddleware must come first to catch all errors
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
-
-
-// **ÖNEMLÝ: Authentication her þeyden önce gelmeli**
-
 app.UseCors("AllowUi");
 app.UseAuthentication();
 app.UseAuthorization();

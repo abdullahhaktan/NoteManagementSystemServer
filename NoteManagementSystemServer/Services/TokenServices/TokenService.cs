@@ -11,6 +11,7 @@ namespace NoteManagementSystemServer.Services.TokenServices
     {
         public async Task<string> CreateTokenAsync(AppUser user)
         {
+            // Build the claims list — these are the pieces of info embedded inside the token
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.NameId,user.Id.ToString()),
@@ -20,12 +21,14 @@ namespace NoteManagementSystemServer.Services.TokenServices
                 new Claim("UserId", user.Id.ToString()) // SENİN PROJENİN KALBİ BURASI!
             };
 
+            // Fetch user roles and add each one as a separate claim
             var roles = await userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
+            // Sign the token with our secret key using HMAC-SHA512
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
@@ -38,11 +41,10 @@ namespace NoteManagementSystemServer.Services.TokenServices
                 Audience = configuration["Jwt:Audience"]
             };
 
+            // Create and return the token as a string
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
-
             return tokenHandler.WriteToken(token);
-
         }
     }
 }

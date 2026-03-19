@@ -10,11 +10,13 @@ namespace NoteManagemenSystemServer.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMyArchiveNotes()
         {
+            // Get the username from the JWT token claims
             var userName = User.Identity.Name;
             if (userName == null)
             {
                 throw new ArgumentNullException("Kullanıcı kaydı bulunamadı");
             }
+
             var myNotes = await noteArhiveService.GetMyArchiveNotesAsync(userName);
             return Ok(myNotes);
         }
@@ -22,6 +24,7 @@ namespace NoteManagemenSystemServer.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteArchiveNote(int id)
         {
+            // Permanently deletes the note and its file from the server
             await noteArhiveService.DeleteNoteArchiveAsync(id);
             return NoContent();
         }
