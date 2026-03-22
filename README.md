@@ -165,6 +165,6 @@ Proje ilk çalıştırıldığında aşağıdaki veriler otomatik oluşturulur:
 
 ## 📸 Proje Görselleri
 
-> _(Ekran görüntüleri eklenecek)_
+<img width="3524" height="2250" alt="localhost_7288_swagger_index html" src="https://github.com/user-attachments/assets/2cc53100-9bae-4d3f-9625-62cbaec5924c" />
 
 ---
